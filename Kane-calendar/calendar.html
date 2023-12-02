@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang = "en">
+	<head>
+		<meta charset = "UTF-8">
+		<meta
+			name = "viewport"
+			content = "width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+		>
+		<meta
+			http-equiv = "X-UA-Compatible"
+			content = "ie=edge"
+		>
+		
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+		<title>日历</title>
+		<style>
+			h4{
+				color: #ff9b7f;
+			}
+		</style>
+	</head>
+	<body>
+		<h4></h4>
+		<table id="calendar" border="1" cellspacing="0">
+			<thead>
+				<tr class="head-week">
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+		<p>
+			<input type="checkbox" id="switch-mode">
+			周日是第一天.
+		</p>
+			
+	</body>
+	<script>
+		/*标记位,true:第一天是周一*/
+		let firstMonday = true;
+		const weekCN = ["一","二","三","四","五","六","日"];
+		const el_table_calendar = document.getElementById('calendar');
+		const el_tbody = el_table_calendar.querySelector('tbody');
+		const el_tr_headWeek = el_table_calendar.querySelector('.head-week');
+		const el_checkbox_switch_mode = document.getElementById('switch-mode');
+		const el_today_time=document.querySelector('h4');
+		
+		
+		el_today_time.innerText=dayjs().format('YYYY-MM-DD,dddd')
+		
+		el_checkbox_switch_mode.addEventListener('change',(event) => {
+			firstMonday = !firstMonday;
+			/*如果第一天为周日模式,则在数组头添加"日",然后删除最后一个日,得到["日","一",...,"六"]*/
+			if(event.target.checked){
+				weekCN.unshift("日");
+				weekCN.pop();
+			}else {
+				weekCN.shift();
+				weekCN.push('日');
+			}
+			renderThead();
+			renderTbody();
+		});
+		
+		/**
+		 * 获取某日在一周数组中的下标(index)
+		 * @param dayInWeek {number} 本日是周几
+		 * @return {number} 在每周的数组下标
+		 */
+		function getDaytArrayIndex (dayInWeek) {
+			return firstMonday ? 
+			       (dayInWeek === 0 ? 6 : dayInWeek - 1)
+			                   : (dayInWeek) % 7;
+		}
+		
+		/**
+		 * 获取某月第一天的那一周不包含本月份的天数,如:7月第一天是周六,那么返回5,因为周1-5不属于本月。会受firstMonday影响
+		 * @param dayInWeek {number} 本月第一天是周几
+		 */
+		function getDaysWithinMonth(dayInWeek){
+			if(firstMonday){
+				return dayInWeek === 0 ? 6 : dayInWeek - 1;
+			}else {
+				return dayInWeek
+			}
+		}
+		
+		function renderThead () {
+			el_tr_headWeek.innerHTML = null;
+			const cloned_weekCN = [...weekCN];
+			for(let i = 0;i<7;i++) {
+				const el_th_week = document.createElement('th');
+				el_th_week.innerText = cloned_weekCN[i];
+				el_tr_headWeek.append(el_th_week);
+			}
+		}
+		
+		function renderTbody () {
+			el_tbody.innerHTML = "";
+			const tr_list = [];
+			const dayjs_today = dayjs();
+			/*月份*/
+			const thismonth = dayjs_today.get('month') + 1;
+			/*获取本月一共多少天*/
+			const daysInThismonth = dayjs_today.daysInMonth();
+			/*获取本月第一天dayjs对象*/
+			const dayjs_firstDayInMonth = dayjs_today.startOf('month');
+			/*获取本月第一天是周几*/
+			const firstDayInWeek = dayjs_firstDayInMonth.get('day');
+			console.log("本月第一天是周"+firstDayInWeek);
+			/*本月第一天对应的数组下标*/
+			const firstIndexInWeek = getDaytArrayIndex(firstDayInWeek);
+			console.log(`周${firstDayInWeek}对应的数组下标是 ${firstIndexInWeek}`);
+			
+			/*从本月第一天开始循环*/
+			let date = 1;
+			while ( date <= daysInThismonth ){
+				/*该日在tr_list的第几个下标*/
+				const index = Math.ceil((date + getDaysWithinMonth(firstDayInWeek))/7) - 1;
+				// console.log(`7月${date}日,第${index + 1}行`);
+				const newDate = dayjs_today.clone().set('date',date);
+				
+				/*获取这一天在一周里的下标*/
+				const innerIndex = getDaytArrayIndex(newDate.get('day'));
+				if(tr_list[index]){
+					tr_list[index][innerIndex] = date;
+				}else {
+					tr_list[index] = [];
+					tr_list[index][innerIndex] = date;
+				}
+				date++;
+			}
+			console.log(tr_list);
+			for(let i = 0; i < tr_list.length ; i++){
+				const el_tr = document.createElement('tr');
+				for(let j = 0; j < tr_list[i].length;j++){
+					const td = document.createElement('td');
+					td.innerText = tr_list[i][j] ?? "";
+					el_tr.append(td);
+				}
+				el_tbody.append(el_tr);
+			}
+			
+			console.log(dayjs_today.startOf('month'));
+		}
+		
+		renderThead();
+		renderTbody();
+	</script>
+</html>

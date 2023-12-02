@@ -1,0 +1,8 @@
+{
+	"presets" : [ 
+		["@babel/preset-react",{
+			"importSource" : "preact",
+			"runtime" : "automatic"
+		}]
+	]
+}

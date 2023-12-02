@@ -1,0 +1,10 @@
+{
+	"name" : "learn-throttle&debounce" ,
+	"version" : "1.0.0" ,
+	"scripts" : {
+		"start" : "parcel index.html"
+	} ,
+	"dependencies" : {
+		
+	}
+}

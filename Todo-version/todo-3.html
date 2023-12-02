@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang = "en">
+	<head>
+		<meta charset = "UTF-8">
+		<meta
+			name = "viewport"
+			content = "width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+		>
+		<meta
+			http-equiv = "X-UA-Compatible"
+			content = "ie=edge"
+		>
+		<title>Document</title>
+		<style>
+			body {
+				--main-color: #fff4f4;
+				--btn-color: #e599a9;
+				--text-color: #922929;
+			}
+			
+			.box {
+				width: 290px;
+				margin: 20px auto;
+			}
+			
+			.tab-button-0 {
+				width: 93px;
+				margin-right: 3px;
+				background: white;
+				outline: none;
+				border: 1px solid black;
+				margin-bottom: 2px;
+				cursor: pointer;
+				font-weight: bolder;
+			}
+			
+			.tab-button-1 {
+				width: 93px;
+				margin-right: 3px;
+				background: var(--btn-color);
+				outline: none;
+				color: white;
+				font-weight: bolder;
+				border: 1px solid black;
+				margin-bottom: 2px;
+				cursor: pointer;
+			}
+			
+			.todo-li {
+				cursor: pointer;
+				background: var(--main-color);
+				margin-bottom: 2px;
+				position: relative;
+				min-height: 34px;
+				height: fit-content;
+				
+			}
+			
+			.todo-operate {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				align-items: center;
+				height: fit-content;
+				margin-bottom: 2px;
+			}
+			
+			ul {
+				padding: unset;
+				list-style: none;
+			}
+			
+			.renew-time {
+				margin: 0;
+				color: var(--text-color);
+				font-size: 6px;
+				
+			}
+			
+			.btn {
+				background: white;
+				outline: none;
+				border: 1px solid black;
+				color: var(--btn-color);
+				border-radius: 4px;
+				margin-bottom: 2px;
+				cursor: pointer;
+			}
+			
+			.btn:hover {
+				background: var(--btn-color);
+				color: white;
+			}
+			
+			.edit-delete-notes {
+				display: flex;
+				flex-direction: column;
+			}
+			
+			.todo-content {
+				display: flex;
+				
+				align-items: center;
+				
+				width: 160px;
+				display: inline-flex;
+				font-size: 16px;
+				border: unset;
+				outline: unset;
+				background: var(--main-color);
+				height: fit-content;
+				white-space: pre-wrap;
+				word-break: break-all;
+				word-wrap: break-word;
+			}
+			
+			.todo-textarea {
+				
+				width: 160px;
+				display: inline-flex;
+				font-size: 20px;
+				border: unset;
+				outline: unset;
+				background: var(--main-color);
+				height: 140px;
+				white-space: pre-wrap;
+				word-break: break-all;
+				word-wrap: break-word;
+				resize: none;
+				
+			}
+			
+			.schedule-textarea {
+				width: 218px;
+				resize: none;
+			}
+			
+			.add-change {
+				display: inline-flex;
+				flex-direction: column;
+				margin-left: 6px;
+			}
+			
+			.first-input-area {
+				display: inline-flex;
+				flex-direction: row;
+				align-items: center;
+				margin-bottom: 20px;
+			}
+			
+			select {
+				color: var(--btn-color);
+			}
+			
+			#pink {
+				color: pink;
+			}
+			
+			#green {
+				color: green;
+			}
+			
+			#purple {
+				color: purple;
+			}
+			
+			#blue {
+				color: blue;
+			}
+			
+			#orange {
+				color: orange;
+			}
+			
+			vv {
+				color: #f7e9e3;
+			}
+			
+			body {
+				font-family: Arial, Helvetica, sans-serif;
+			}
+			
+			.notes {
+				width: 270px;
+				margin: 0 7.5px;
+				resize: none;
+			}
+		</style>
+	</head>
+	
+	
+	
+	
+	<body>
+		<div class = "box">
+			<div class = "first-input-area">
+				<textarea
+					placeholder = "input your schedule"
+					class = "schedule-textarea"
+				></textarea>
+				<div class = "add-change">
+					<button class = "btn">add</button>
+					<select
+						name = "color"
+						id = "change-color"
+					>
+						<option
+							value = "pink"
+							id = "pink"
+						>pink
+						</option>
+						<option
+							value = "green"
+							id = "green"
+						>green
+						</option>
+						<option
+							value = "purple"
+							id = "purple"
+						>purple
+						</option>
+						<option
+							value = "blue"
+							id = "blue"
+						>blue
+						</option>
+						<option
+							value = "orange"
+							id = "orange"
+						>orange
+						</option>
+					</select>
+				</div>
+			</div>
+			<div tabs></div>
+			<ul></ul>
+		</div>
+	</body>
+	
+	
+	
+	<script>
+		
+		//增加备注按钮和功能 , 切换主题颜色,检测到有滚动条时增加高度
+		const select = document.getElementsByTagName('select')[0];
+		const input = document.getElementsByTagName('textarea')[0];
+		const button = document.getElementsByTagName('button')[0];
+		const ul = document.getElementsByTagName('ul')[0];
+		const tabsContainer = document.querySelector('div[tabs]');
+		let currentTabType = 'all';
+		let todos = localStorage['todos'] ? JSON.parse(localStorage['todos']) : [];
+		
+		let tabs = [
+			{
+				text : 'all todos' ,
+				type : 'all' ,
+			} ,
+			{
+				text : 'uncompleted' ,
+				type : 'uncompleted' ,
+			} ,
+			{
+				text : 'completed' ,
+				type : 'completed' ,
+			} ,
+		];
+		
+		select.addEventListener('click' , function (e) {
+			let selectColor = e.target.value;
+			localStorage.setItem('currentColor' , selectColor);
+			switch ( selectColor ) {
+				case 'green':
+					document.body.style.setProperty('--main-color' , '#e8f7e6');
+					document.body.style.setProperty('--btn-color' , '#287221');
+					document.body.style.setProperty('--text-color' , '#165210');
+					break;
+				case'purple':
+					document.body.style.setProperty('--main-color' , '#f3f3fc');
+					document.body.style.setProperty('--btn-color' , '#a0a0f4');
+					document.body.style.setProperty('--text-color' , '#6e57ed');
+					break;
+				case 'blue':
+					document.body.style.setProperty('--main-color' , '#ebf2f8');
+					document.body.style.setProperty('--btn-color' , '#7fbef7');
+					document.body.style.setProperty('--text-color' , '#296498');
+					break;
+				case 'orange':
+					document.body.style.setProperty('--main-color' , '#fbf3f0');
+					document.body.style.setProperty('--btn-color' , '#e09675');
+					document.body.style.setProperty('--text-color' , '#8e4e31');
+					break;
+				case 'pink':
+					document.body.style.setProperty('--main-color' , '#fff4f4');
+					document.body.style.setProperty('--btn-color' , '#e599a9');
+					document.body.style.setProperty('--text-color' , '#922929');
+					break;
+			}
+			
+		});
+		console.log(select.value);
+		
+		
+		const setTodos = (id , partialObject = {} , del = false) => {
+			if ( del === true ) {
+				const index = todos.findIndex((todo) => todo.id === id);
+				console.log(index);
+				todos.splice(index , 1);
+			} else {
+				const target = todos.find((todo) =>
+					todo.id === id ,
+				);
+				//都不需要包花括号
+				for ( const key in partialObject ) {
+					target[key] = partialObject[key];
+				}
+			}
+		};
+		input.focus();
+		const renderTodos = () => {
+			localStorage['todos'] = JSON.stringify(todos);
+			if ( todos.length === 0 ) return ul.innerText = `No Todos, Yay`;
+			ul.innerText = '';
+			renderTabs();
+			for ( const todo of todos ) {
+				if ( currentTabType !== 'all' ) {
+					if ( currentTabType === 'uncompleted' ) {
+						if ( todo.status === true ) {
+							continue;
+						}
+					}
+					if ( currentTabType === 'completed' ) {
+						if ( todo.status === false ) {
+							continue;
+						}
+					}
+				}
+				
+				
+				let completedCheck = document.createElement('input');
+				let renewTime = document.createElement('p');
+				let span = document.createElement('div');
+				let li = document.createElement('li');
+				let edit_delete_notes = document.createElement('span');
+				let deleteButton = document.createElement('button');
+				let editButton = document.createElement('button');
+				let addNotesButton = document.createElement('button');
+				let todoOperate = document.createElement('div');
+				
+				todoOperate.append(completedCheck , span , edit_delete_notes);
+				todoOperate.classList.add('todo-operate');
+				edit_delete_notes.append(editButton , addNotesButton , deleteButton);
+				edit_delete_notes.classList.add('edit-delete-notes');
+				
+				completedCheck.setAttribute('type' , 'checkbox');
+				renewTime.innerText = '最后修改时间 : ' + todo.currentTime;
+				renewTime.classList.add('renew-time');
+				span.innerText = todo.text;
+				span.classList.add('todo-content');
+				editButton.innerText = 'Edit';
+				editButton.classList.add('btn');
+				deleteButton.innerText = 'Delete';
+				deleteButton.classList.add('btn');
+				addNotesButton.innerText = 'Add Notes';
+				addNotesButton.classList.add('btn');
+				
+				if ( todo.status === true ) {
+					completedCheck.setAttribute('checked' , true);
+					span.style.textDecoration = 'line-through';
+				}
+				
+				editButton.addEventListener('click' , function () {
+					let todoTextArea = document.createElement('textarea');
+					todoTextArea.value = span.innerText;
+					todoTextArea.classList.add('todo-textarea');
+					
+					span.style.display = 'none';
+					todoOperate.append(completedCheck , todoTextArea , edit_delete_notes);
+					todoOperate.classList.add('todo-operate');
+					todoTextArea.focus();
+					
+					editButton.innerText = '☑';
+					editButton.classList.add('btn');
+					editButton.addEventListener('click' , function () {
+						todo.text = todoTextArea.value;
+						console.log(todoTextArea.value);
+						todo.currentTime = (new Date()).toLocaleString();
+						renderTodos();
+					});
+				});
+				let Notes=document.createElement('textarea');
+				Notes.classList.add('notes');
+			
+				addNotesButton.addEventListener('click' , function () {
+					Notes.focus();
+					addNotesButton.setAttribute('disabled' , 'true');
+					addNotesButton.innerText='不可用';
+					
+					alert('只能添加一条备注')
+					Notes.addEventListener('input' , function () {
+						console.log(Notes.value);
+						window.addEventListener('click' , function () {
+							todo.notes = Notes.value;
+							const myNotes=document.createElement('div');
+							myNotes.innerText='备注:'+Notes.value
+							renderTodos()
+						});
+					});
+					
+					li.append(todoOperate , renewTime , br , Notes);
+					
+				});
+				deleteButton.addEventListener('click' , function () {
+					setTodos(todo.id , null , true);
+					localStorage['todos'] = JSON.stringify(todos);
+					renderTodos();
+				});
+				completedCheck.addEventListener('change' , function () {
+					if ( this.checked ) {
+						console.log(this.checked);//true
+						setTodos(todo.id , { status : !todo.status });
+						renderTodos();
+					} else {
+						//取消选中时,status又变为false
+						setTodos(todo.id , { status : !todo.status });
+						renderTodos();
+					}
+					
+				});
+				const br = document.createElement('br');
+				console.log(Notes);
+				if(todo.notes===null){
+					li.append(todoOperate , renewTime);
+				}else{
+					Notes.value=todo.notes;
+					li.append(todoOperate , renewTime,br , Notes);
+				}
+				
+				li.classList.add('todo-li');
+				ul.append(li);
+			}
+			
+		};
+		
+		const renderTabs = () => {
+			tabsContainer.innerHTML = '';
+			for ( const item of tabs ) {
+				let tab = document.createElement('button');
+				tab.innerText = item.text;
+				tab.classList.add('tab-button-0');
+				if ( currentTabType === item.type ) {
+					tab.classList.add('tab-button-1');
+				}
+				tab.addEventListener('click' , function () {
+					currentTabType = item.type;
+					renderTodos();
+				});
+				
+				tabsContainer.append(tab);
+			}
+		};
+		button.addEventListener('click' , function () {
+			if ( input.value !== '' ) {
+				todos.push({
+					id : Math.random() ,
+					status : false ,
+					text : input.value ,
+					currentTime : (new Date()).toLocaleString() ,
+					notes : null ,
+				});
+				// console.log(todos);
+				renderTodos();
+				
+				input.value = '';
+				input.focus();
+			}
+		});
+		renderTabs();
+		renderTodos();
+		
+		// console.log(todos);
+		// localStorage.clear()
+	</script>
+</html>
+

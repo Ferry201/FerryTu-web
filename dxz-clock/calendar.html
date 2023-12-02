@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang = "en">
+	<head>
+		<meta charset = "UTF-8">
+		<meta
+			name = "viewport"
+			content = "width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+		>
+		<meta
+			http-equiv = "X-UA-Compatible"
+			content = "ie=edge"
+		>
+		<script src = "https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+		<title>Document</title>
+		<style>
+			span {
+				/*padding-right: 26px;*/
+			}
+			
+			.week-list {
+				width: 142px;
+				padding-bottom: 2px;
+				padding-right: 0;
+				font-size: 16px;
+			}
+			
+			.date-box {
+				width: 140px;
+				padding-bottom: 2px;
+				padding-right: 0;
+				font-size: 14px;
+				height: 100px;
+			}
+			
+			
+			.date-box span {
+				font-size: 14px;
+			}
+			
+			.dividing-line {
+				border-bottom: 1px solid #e599a9;
+				width: 140px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class = "container">
+			<!--			日历跳转日期部分,还没写-->
+			
+			<!--			日历主体部分:-->
+			<div>
+				<!--				周-->
+				<div class = "week-list">
+					<span class = "1">一</span>
+					<span class = "2">二</span>
+					<span class = "3">三</span>
+					<span class = "4">四</span>
+					<span class = "5">五</span>
+					<span class = "6">六</span>
+					<span class = "7">日</span>
+				</div>
+				<div class = "dividing-line"></div>
+				<!--				日期-->
+				<div class = "date-box">
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<hr>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<hr>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<hr>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<hr>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+			
+			
+			</div>
+		
+		</div>
+	</body>
+	
+	<script>
+		const dateBox = document.querySelector('.date-box');
+		const dateItem = document.querySelectorAll('.date-box span');
+		let dateArray = Array.from(dateItem);
+		
+		const firstDay = dayjs().startOf('month');
+		for ( let j = 1 ; j <= dateArray.length ; j ++ ) {
+			
+			for ( let i = 1 ; i <= (dayjs().daysInMonth()) ; i ++ ) {
+				console.log(i);
+				let firstDay = dayjs().startOf('month');
+				let weekArray = new Array;
+				weekArray = ['1' , '2' , '3' , '4' , '5' , '6' , '7'];
+				let x = weekArray[firstDay.format('d')];
+				if ( x === firstDay.format('d') + 1 ) {
+					
+				}
+				dateArray[i].innerText = i;
+				if ( i < 10 ) {
+					dateArray[i].innerText = '0' + i;
+				}
+			}
+			
+		}
+		dateArray.forEach(function (span) {
+			
+		});
+	</script>
+</html>

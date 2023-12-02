@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang = "en">
+	<head>
+		<meta charset = "UTF-8" />
+		<title>Document</title>
+		<style>
+			.box {
+				width: 300px;
+				margin: 20px auto;
+			}
+			
+			.todo-li {
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<div class = "box">
+			<span>&#9745</span>
+			<span>&#9746</span>
+			<div>
+				<input placeholder = "input your item">
+				<button>add</button>
+			</div>
+			<div tabs></div>
+			<ul></ul>
+		</div>
+	</body>
+	<script>
+		const input = document.getElementsByTagName('input')[0];
+		const [ul] = document.getElementsByTagName('ul');
+		const [button] = document.getElementsByTagName('button');
+		const tabsContainer = document.querySelector('div[tabs]');
+		let currentTabType = "all";
+		const todos = [];
+		const tabs = [
+			{
+				text : "all todos" ,
+				type : "all" ,
+			} ,
+			{
+				text : "completed" ,
+				type : "completed" ,
+			} ,
+			{
+				text : "incomplete" ,
+				type : "incomplete" ,
+			} ,
+		];
+		
+		/*通用的操作todo数组的方法*/
+		const setTodos = (id , partialObject = {} , del = false) => {
+			if ( del === true ) {
+				const index = todos.findIndex((todo) => todo.id === id);
+				todos.splice(index , 1);
+				console.log(index);
+			} else {
+				const target = todos.find((todo) => todo.id === id);
+				console.log(target);//点了完成的该对象
+				for ( const key in partialObject ) {
+					console.log(key);//status
+					target[key] = partialObject[key];
+				}
+			}
+		};
+		
+		const renderTodoList = () => {
+			if ( todos.length === 0 ) return ul.innerText = `No todos, yay!`;
+			ul.innerHTML = '';
+			renderTabs();
+			for ( const todo of todos ) {
+				if ( currentTabType !== 'all' ) {
+					if ( currentTabType === "completed" ) {
+						if ( todo.status === false ) {
+							continue;
+							//在循环中遇到 continue 语句时，会立即跳过当前迭代的剩余代码，继续执行下一次迭代
+						}
+					}
+					if ( currentTabType === "incomplete" ) {
+						if ( todo.status === true ) {
+							continue;
+						}
+					}
+				}
+				const li = document.createElement('li');
+				const span = document.createElement('span');
+				const removeBtn = document.createElement('button');
+				
+				span.innerText = todo.text;
+				span.classList.add('todo-li');
+				if ( todo.status === true ) {
+					span.style.textDecoration = "line-through";
+				}
+				removeBtn.innerText = 'delete';
+				span.addEventListener('click' , () => {
+					setTodos(todo.id , { status : !todo.status });
+					renderTodoList();
+				});
+				removeBtn.addEventListener('click' , () => {
+					setTodos(todo.id , null , true);
+					renderTodoList();
+				});
+				li.append(span , removeBtn);
+				ul.append(li);
+			}
+		};
+		const renderTabs = () => {
+			tabsContainer.innerHTML = '';
+			for ( const item of tabs ) {
+				const tab = document.createElement('button');
+				tab.innerText = item.text;
+				if ( item.type === currentTabType ) {
+					tab.style.backgroundColor = 'blue';
+				}
+				tab.addEventListener('click' , () => {
+					currentTabType = item.type;
+					renderTodoList();
+				});
+				tabsContainer.append(tab);
+			}
+		};
+		
+		button.addEventListener('click' , () => {
+			const inputValue = input.value;
+			if ( inputValue ) {
+				todos.push({
+					text : inputValue ,
+					status : false ,
+					id : Math.random() ,
+				});
+				renderTodoList();
+				input.value = '';
+			}
+		});
+		renderTabs();
+		renderTodoList();
+	</script>
+</html>

@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang = "en">
+	<head>
+		<meta charset = "UTF-8">
+		<meta
+			name = "viewport"
+			content = "width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+		>
+		<meta
+			http-equiv = "X-UA-Compatible"
+			content = "ie=edge"
+		>
+		<title>Document</title>
+		<style>
+			.box {
+				width: 290px;
+				margin: 20px auto;
+			}
+			
+			.tab-button {
+				width: 93px;
+				margin-right: 2px;
+			}
+			
+			.todo-li {
+				cursor: pointer;
+				background: #f5dce1;
+				margin-bottom: 2px;
+				position: relative;
+				min-height: 34px;
+				height: fit-content;
+				
+			}
+			
+			.todo-operate {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				align-items: center;
+				height: fit-content;
+				margin-bottom: 2px;
+			}
+			
+			ul {
+				padding: unset;
+				list-style: none;
+			}
+			
+			.renew-time {
+				margin: 0;
+				color: #922929;
+				font-size: 6px;
+				
+			}
+			
+			.btn {
+				background: white;
+				outline: none;
+				border: 1px solid black;
+				color: coral;
+				border-radius: 2px;
+				
+			}
+			
+			.edit-delete {
+				
+			}
+			.todo-content{
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				
+				width: 160px;
+				display: inline-flex;
+				font-size: 16px;
+				border: unset;
+				outline: unset;
+				background: #f5dce1;
+				height: fit-content;
+				white-space: pre-wrap;
+				word-break: break-all;
+				word-wrap: break-word;
+			}
+			.todo-textarea {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				
+				width: 160px;
+				display: inline-flex;
+				font-size: 16px;
+				border: unset;
+				outline: unset;
+				background: #f5dce1;
+				height: 220px;
+				white-space: pre-wrap;
+				word-break: break-all;
+				word-wrap: break-word;
+				resize: none;
+				
+			}
+			.schedule-textarea{
+				width: 234px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class = "box">
+			<svg class="icon" style="width: 1em;height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8119"><path d="M533.015273 788.503273l-48.151273 3.165091 3.165091-48.151273L857.320727 374.225455l44.962909 45.009454-369.268363 369.268364zM698.181818 856.040727A51.642182 51.642182 0 0 1 646.586182 907.636364H167.936A51.642182 51.642182 0 0 1 116.363636 856.040727V167.959273A51.665455 51.665455 0 0 1 167.936 116.363636h478.650182A51.665455 51.665455 0 0 1 698.181818 167.959273v266.658909l-278.109091 278.109091-8.541091 130.187636a21.015273 21.015273 0 0 0 20.759273 22.132364c0.418909 0 0.861091 0 1.326546-0.046546l130.187636-8.564363L698.181818 722.082909v133.957818z m187.857455-551.796363a41.495273 41.495273 0 0 0-29.323637-12.334546c-9.821091 0-19.456 3.607273-26.740363 10.914909L768 364.8V167.959273A121.530182 121.530182 0 0 0 646.586182 46.545455H167.936A121.530182 121.530182 0 0 0 46.545455 167.959273v688.081454A121.530182 121.530182 0 0 0 167.936 977.454545h478.650182A121.530182 121.530182 0 0 0 768 856.040727v-199.936h-3.816727l209.547636-209.547636c15.080727-15.104 14.452364-40.192-1.442909-56.087273l-86.248727-86.225454zM221.090909 302.545455h372.363636a34.909091 34.909091 0 1 0 0-69.818182h-372.363636a34.909091 34.909091 0 1 0 0 69.818182m0 162.90909h232.727273a34.909091 34.909091 0 1 0 0-69.818181h-232.727273a34.909091 34.909091 0 1 0 0 69.818181m139.636364 93.09091h-139.636364a34.909091 34.909091 0 1 0 0 69.818181h139.636364a34.909091 34.909091 0 1 0 0-69.818181" fill="red" p-id="8120"></path></svg>
+			<span>&#9745</span>
+			<span>&#9746</span>
+			<div>
+<!--				<input-->
+<!--					placeholder = "input your item"-->
+<!--					maxlength = "10"-->
+<!--				>-->
+				<textarea placeholder = "input your schedule" class="schedule-textarea"></textarea>
+				<button>add</button>
+			</div>
+			<div tabs></div>
+			<ul></ul>
+		</div>
+	</body>
+	<script>
+		//增加最后修改的日期和时间 样式 把Input改成textarea
+		const input = document.getElementsByTagName('textarea')[0];
+		const button = document.getElementsByTagName('button')[0];
+		const ul = document.getElementsByTagName('ul')[0];
+		const tabsContainer = document.querySelector('div[tabs]');
+		let currentTabType = 'all';
+		let todos = localStorage['todos'] ? JSON.parse(localStorage['todos']) : [];
+		// let currentTime = (new Date()).toLocaleString();
+		
+		let tabs = [
+			{
+				text : 'all todos' ,
+				type : 'all' ,
+			} ,
+			{
+				text : 'uncompleted' ,
+				type : 'uncompleted' ,
+			} ,
+			{
+				text : 'completed' ,
+				type : 'completed' ,
+			} ,
+		];
+		
+		const setTodos = (id , partialObject = {} , del = false) => {
+			if ( del === true ) {
+				const index = todos.findIndex((todo) => todo.id === id);
+				console.log(index);
+				todos.splice(index , 1);
+			} else {
+				const target = todos.find((todo) =>
+					todo.id === id ,
+				);
+				//都不需要包花括号,看来要好好学习箭头函数
+				for ( const key in partialObject ) {
+					target[key] = partialObject[key];
+				}
+			}
+		};
+		
+		const renderTodos = () => {
+			localStorage['todos'] = JSON.stringify(todos);
+			if ( todos.length === 0 ) return ul.innerText = `No Todos, Yay`;
+			ul.innerText = '';
+			renderTabs();
+			for ( const todo of todos ) {
+				if ( currentTabType !== 'all' ) {
+					if ( currentTabType === 'uncompleted' ) {
+						if ( todo.status === true ) {
+							continue;
+						}
+					}
+					if ( currentTabType === 'completed' ) {
+						if ( todo.status === false ) {
+							continue;
+						}
+					}
+				}
+				
+				let completedCheck = document.createElement('input');
+				let renewTime = document.createElement('p');
+				let span = document.createElement('div');
+				let li = document.createElement('li');
+				let edit_delete = document.createElement('span');
+				let deleteButton = document.createElement('button');
+				let editButton = document.createElement('button');
+				let todoOperate = document.createElement('div');
+				todoOperate.append(completedCheck , span , edit_delete);
+				todoOperate.classList.add('todo-operate');
+				edit_delete.append(editButton , deleteButton);
+				edit_delete.classList.add('edit-delete');
+				
+				completedCheck.setAttribute('type' , 'checkbox');
+				renewTime.innerText = todo.currentTime;
+				renewTime.classList.add('renew-time');
+				span.innerText = todo.text;
+				span.classList.add('todo-content');
+				editButton.innerText = 'Edit';
+				editButton.classList.add('btn');
+				deleteButton.innerText = 'Delete';
+				deleteButton.classList.add('btn');
+				if ( todo.status === true ) {
+					completedCheck.setAttribute('checked' , true);
+					span.style.textDecoration = 'line-through';
+				}
+				
+				editButton.addEventListener('click' , function () {
+					let todoTextArea = document.createElement('textarea');
+					todoTextArea.value = span.innerText;
+					todoTextArea.classList.add('todo-textarea');
+					
+					span.style.display = 'none';
+					todoOperate.append(completedCheck,todoTextArea, edit_delete);
+					todoOperate.classList.add('todo-operate')
+					todoTextArea.focus();
+					
+					editButton.innerText = '☑';
+					editButton.classList.add('btn');
+					editButton.addEventListener('click' , function () {
+						todo.text = todoTextArea.value;
+						console.log(todoTextArea.value);
+						todo.currentTime = (new Date()).toLocaleString();
+						renderTodos();
+					});
+					
+					
+				});
+				
+				deleteButton.addEventListener('click' , function () {
+					setTodos(todo.id , null , true);
+					localStorage['todos'] = JSON.stringify(todos);
+					renderTodos();
+				});
+				completedCheck.addEventListener('change' , function () {
+					if ( this.checked ) {
+						console.log(this.checked);//true
+						setTodos(todo.id , { status : !todo.status });
+						renderTodos();
+					} else {
+						//取消选中时,status又变为false
+						setTodos(todo.id , { status : !todo.status });
+						renderTodos();
+					}
+					
+				});
+				
+				li.append(todoOperate , renewTime);
+				li.classList.add('todo-li');
+				ul.append(li);
+			}
+			
+		};
+		
+		const renderTabs = () => {
+			tabsContainer.innerHTML = '';
+			for ( const item of tabs ) {
+				let tab = document.createElement('button');
+				tab.innerText = item.text;
+				tab.classList.add('tab-button');
+				if ( currentTabType === item.type ) {
+					tab.style.background = 'pink';
+				}
+				tab.addEventListener('click' , function () {
+					currentTabType = item.type;
+					renderTodos();
+				});
+				
+				tabsContainer.append(tab);
+			}
+		};
+		button.addEventListener('click' , function () {
+			if ( input.value !== '' ) {
+				todos.push({
+					id : Math.random() ,
+					status : false ,
+					text : input.value ,
+					currentTime : (new Date()).toLocaleString() ,
+					notes:null
+				});
+				// console.log(todos);
+				renderTodos();
+				
+				input.value = '';
+				input.focus();
+			}
+		});
+		renderTabs();
+		renderTodos();
+		
+		// console.log(todos);
+		// localStorage.clear()
+	</script>
+</html>
+

@@ -1,0 +1,15 @@
+{
+	"name": "Ferry-calendar",
+	"version": "1.0.0",
+	"scripts": {
+		"start": "parcel calendar.html"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.22.9",
+		"@babel/preset-react": "^7.22.5"
+	},
+	"dependencies": {
+		"preact": "^10.16.0",
+		"react": "^18.2.0"
+	}
+}

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang = "en">
+	<script>
+		'use strict';
+		~function () {
+			'use strict';
+			
+			//显示绑定,使用call or apply
+			function fn () {
+				console.log(this.a);
+			}
+			
+			let object4 = {
+				a : 22 ,
+			};
+			let a = 9;
+			fn.apply(object4);
+			
+			//硬绑定 bind 把this强制绑定到指定对象
+			function foo (argu) {
+				console.log(this.a , argu);
+				return this.a + argu;
+			}
+			
+			let obj = {
+				a : 39,
+			};
+			let b = foo.bind(obj);
+			let bar = b(3);
+			console.log(bar);
+			//特例: 箭头函数根据外层作用域(函数或全局)来决定this,指向外层
+			function ff(){
+				return (x)=>{
+					console.log(this.x);//this继承自ff()
+				}
+			}
+			let obj1={x:'1'};
+			let obj2={x:"2"};
+			let bac=ff.call(obj1);
+			bac.call(obj2)//结果是1, 不是2!
+			//由于ff()的this绑定到obj1 , 所以bac(引用箭头函数)的this也会绑定到obj1,箭头函数的绑定无法被修改
+			
+			
+			//题目 1 
+			function Pet(name) {
+				
+				this.name = name;
+				this.getName = () => this.name;
+			}
+			
+			const cat = new Pet('Fluffy');
+			//使用new来调用函数时,会构造一个新对象并把它绑定到函数调用中的this上
+			console.log(cat.getName()); // 输出的是？
+			
+			const { getName } = cat;
+			console.log(getName());     // 输出的是？
+			//输出的都是 'Fluffy'
+			/**
+			 * 创建一类行为相似,但数值有区别的{对象}
+			 */
+			function Book(author,name,type){
+				this.author = author;
+				this.name = name;
+				this.type = type;
+			}
+			Book.prototype.read = function () {
+				if(this.type === 'electronic'){
+					console.log('注意用眼!');
+				}else if(this.type === 'paper'){
+					console.warn('请爱惜纸质书籍!');
+				}
+			}
+			
+			window.elecBookAdvancedJS = new Book('dxz','advanced js','electronic');
+			window.youDontKnowJSByPaper = new Book('dxz','you dont know js','paper');
+		}();
+		
+		//题目 2
+		const object = {
+			message: 'Hello, World!',
+			
+			logMessage() {
+				console.log(this.message); // 输出的是undefined
+			}
+		};
+		
+		setTimeout(object.logMessage, 1000);
+		//由 setTimeout() 执行的代码是从一个独立于调用 setTimeout 的函数的执行环境中调用的。
+		//如果你没有在调用中或用 bind 设置 this，
+		// 它将默认为 window（或 global）对象。
+		// 它将与调用 setTimeout 的函数的 this 值不一样。
+		
+		//题目 3
+		const object3 = {
+			who: 'World',
+			
+			greet() {
+				return `Hello,${this.who}`;
+			},
+			
+			farewell: () => {
+				return `Goodbye, ${this.who}!`;
+			}
+		};
+		
+		console.log(object3.greet());   
+		// 输出的是“Hello，World”
+		//函数被调用时Object3对象包含函数引用.当greet()被调用时,
+		// 它的前面确实加上了对object3的引用.当函数引用有上下文对象时,
+		//隐式绑定规则会把函数调用中的this绑定到这个上下文对象
+		console.log(object3.farewell()); 
+		// 输出的是“Goodbye，undefined”
+		//箭头函数根据外层作用域(函数或全局)来决定this,指向外层
+		//始终指向外部,也就是object3的外部
+		
+		//题目4
+		
+		
+	</script>
+</html>

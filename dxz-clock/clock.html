@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang = "en">
+	<head>
+		<meta charset = "UTF-8">
+		<meta
+			name = "viewport"
+			content = "width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+		>
+		<meta
+			http-equiv = "X-UA-Compatible"
+			content = "ie=edge"
+		>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+		<title>Document</title>
+		<style>
+			#time{
+				font-size: 50px;
+				font-weight: 600;
+			}
+		</style>
+	</head>
+	<body>
+		<!--<p id="time"></p>
+		<div>
+			<span id="week"></span>
+		</div>
+		<button id="12"></button>-->
+		
+		<div class="container">
+			<!--时间-->
+			<div class="time"></div>
+			<!--日期-->
+			<div class="date"></div>
+			<!--切换12-24小时制-->
+			<button class="btn-toggle">切换为12小时制</button>
+			<p>
+				<button class="prev-btn">前一天此时</button>
+				<!--如果就在今天,则不显示此按钮-->
+				<button class="current-btn">回到今天</button>
+				<button class="next-btn">后一天此时</button>
+			</p>
+		</div>
+	</body>
+	<script type="tsx">
+		// @ts-nocheck
+		function startTime(){
+			// var today=new Date();
+			// var h=today.getHours();
+			// var m=today.getMinutes();
+			// var s=today.getSeconds();
+			// var time=document.getElementById('time');
+			// time.innerHTML=h+":"+m+":"+s;
+			var time=document.getElementById('time');
+			//@ts-ignore
+			time.innerHTML=dayjs(new Date()).format('HH:mm:ss');
+			// setInterval(function(){startTime()},1000);
+			window.location.reload()
+		}
+			startTime();
+		
+		function starthhTime(){
+			var time=document.getElementById('time');
+			//@ts-ignore
+			time.innerHTML=dayjs(new Date()).format('hh:mm:ss');
+			// setInterval(function () {starthhTime()},1000)
+			window.location.reload()
+		}
+		
+		
+		const btn=document.getElementById('12');
+		btn.innerText='12';
+		let i=0;
+		btn.addEventListener('click',function () {
+			if(i%2===0){
+				btn.innerText='24';
+				starthhTime();
+				
+			}else{
+				btn.innerText='12';
+				startTime()
+			}
+				i++
+			
+			
+		})
+		
+		
+		var today=new Date();
+		var weekend=new Array(7);
+		weekend=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+		
+		var week=document.getElementById('week');
+		week.innerHTML=weekend[today.getDay()]+','+today.getDate()+','+today.getMonth()+','+today.getFullYear()
+	</script>
+	
+	<script>
+		/*标记位,当前是什么计时法*/
+		let hourClock = 24;
+		const elTime = document.querySelector('div.time');
+		const elDate = document.querySelector('div.date');
+		const elBtnToggle = document.querySelector('button.btn-toggle');
+		
+		
+		
+		let offset=0;
+		
+		const prevBtn=document.querySelector('.prev-btn');
+		const nextBtn=document.querySelector('.next-btn');
+		const todayBtn=document.querySelector('.current-btn');
+		
+		
+		prevBtn.addEventListener('click',function () {
+			offset -= 1;
+			refreshTime();
+		});
+		nextBtn.addEventListener('click',function () {
+			offset += 1;
+			refreshTime();
+		});
+		todayBtn.addEventListener('click',function () {
+			offset = 0;
+			refreshTime();
+		});
+		
+		
+		
+		
+		
+		
+		/*切换12-24小时制*/
+		function toggleHourClock() {
+			hourClock = hourClock === 12 ? 24 : 12;
+			elBtnToggle.innerText = `切换为${hourClock===12 ? 24 : 12}小时制`;
+		}
+		/*获取最新时间并显示*/
+		function refreshTime() {
+			let currentTime = dayjs();
+			if(offset !== 0){
+				/*获取当前的日期*/
+				currentTime = currentTime.add(offset,'day');
+				todayBtn.style.display = "unset";
+			}else {
+				todayBtn.style.display = "none";
+			}
+			elDate.innerText = currentTime.format(`YYYY-MM-DD,dddd`);
+			elTime.innerText = currentTime.format(`${hourClock === 12 ? "h" : "HH"}:mm:ss ${hourClock === 12 ? "A" : ""}`);
+		};
+		elBtnToggle.addEventListener('click',function () {
+			toggleHourClock();
+		});
+		const intervalID = setInterval(() => {
+			refreshTime();
+		},200);
+	</script>
+</html>

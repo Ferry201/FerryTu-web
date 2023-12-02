@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang = "en">
+	<head>
+		<meta charset = "UTF-8">
+		<meta
+			name = "viewport"
+			content = "width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+		>
+		<meta
+			http-equiv = "X-UA-Compatible"
+			content = "ie=edge"
+		>
+		<title>Document</title>
+		<style>
+			.box {
+				width: 300px;
+				margin: 20px auto;
+			}
+			
+			.todo-li {
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<div class = "box">
+			<span>&#9745</span>
+			<span>&#9746</span>
+			<div>
+				<input placeholder = "input your item">
+				<button>add</button>
+			</div>
+			<div tabs></div>
+			<ul></ul>
+		</div>
+	</body>
+	<script>
+		//todo-version-1添加功能: localstorage, 编辑, checkbox 限制
+		const input = document.getElementsByTagName('input')[0];
+		const button = document.getElementsByTagName('button')[0];
+		const ul = document.getElementsByTagName('ul')[0];
+		const tabsContainer = document.querySelector('div[tabs]');
+		let currentTabType = 'all';
+		let todos = localStorage['todos'] ? JSON.parse(localStorage['todos']) : [];
+		let tabs = [
+			{
+				text : 'all todos' ,
+				type : 'all' ,
+			} ,
+			{
+				text : 'uncompleted' ,
+				type : 'uncompleted' ,
+			} ,
+			{
+				text : 'completed' ,
+				type : 'completed' ,
+			} ,
+		];
+		
+		const setTodos = (id , partialObject = {} , del = false) => {
+			if ( del === true ) {
+				const index = todos.findIndex((todo) => todo.id === id);
+				console.log(index);
+				todos.splice(index , 1);
+			} else {
+				const target = todos.find((todo) =>
+						todo.id === id ,
+				);
+				//都不需要包花括号,看来要好好学习箭头函数
+				for ( const key in partialObject ) {
+					target[key] = partialObject[key];
+				}
+			}
+		};
+		
+		const renderTodos = () => {
+			localStorage['todos'] = JSON.stringify(todos);
+			if ( todos.length === 0 ) return ul.innerText = `No Todos, Yay`;
+			ul.innerText = '';
+			renderTabs();
+			for ( const todo of todos ) {
+				if ( currentTabType !== 'all' ) {
+					if ( currentTabType === 'uncompleted' ) {
+						if ( todo.status === true ) {
+							continue;
+						}
+					}
+					if ( currentTabType === 'completed' ) {
+						if ( todo.status === false ) {
+							continue;
+						}
+					}
+				}
+				
+				let completedCheck = document.createElement('input');
+				let span = document.createElement('span');
+				let li = document.createElement('li');
+				let deleteButton = document.createElement('button');
+				let editButton = document.createElement('button');
+				
+				completedCheck.setAttribute('type' , 'checkbox');
+				span.innerText = todo.text;
+				span.classList.add('todo-li');
+				editButton.innerText = 'Edit';
+				deleteButton.innerText = 'Delete';
+				if ( todo.status === true ) {
+					completedCheck.setAttribute('checked' , true);
+					span.style.textDecoration = 'line-through';
+				}
+				editButton.addEventListener('click' , function () {
+					let todoInput=document.createElement('input');
+					todoInput.value=span.innerText;
+					span.style.display='none';
+					li.append(completedCheck , todoInput , editButton , deleteButton);
+					todoInput.addEventListener('input' , function () {
+						todo.text = todoInput.value;
+						editButton.innerText = '完成';
+						editButton.addEventListener('click',function () {
+							renderTodos();
+						})
+						
+					});
+					
+				});
+				
+				deleteButton.addEventListener('click' , function () {
+					setTodos(todo.id , null , true);
+					localStorage['todos'] = JSON.stringify(todos);
+					renderTodos();
+				});
+				completedCheck.addEventListener('change' , function () {
+					if ( this.checked ) {
+						console.log(this.checked);//true
+						setTodos(todo.id , { status : !todo.status });
+						renderTodos();
+					} else {
+						//取消选中时,status又变为false
+						setTodos(todo.id , { status : !todo.status });
+						renderTodos();
+					}
+					
+				})
+				
+				li.append(completedCheck , span , editButton , deleteButton);
+				ul.append(li);
+			}
+			
+		};
+		
+		const renderTabs = () => {
+			tabsContainer.innerHTML = '';
+			for ( const item of tabs ) {
+				let tab = document.createElement('button');
+				tab.innerText = item.text;
+				if ( currentTabType === item.type ) {
+					tab.style.background = 'pink';
+				}
+				tab.addEventListener('click' , function () {
+					currentTabType = item.type;
+					renderTodos();
+				});
+				
+				tabsContainer.append(tab);
+			}
+		};
+		button.addEventListener('click' , function () {
+			if ( input.value !== '' ) {
+				todos.push({
+					id : Math.random() ,
+					status : false ,
+					text : input.value ,
+				});
+				// console.log(todos);
+				renderTodos();
+				
+				input.value = '';
+				input.focus()
+			}
+		});
+		renderTabs();
+		renderTodos();
+		console.log(todos);
+		// localStorage.clear()
+	</script>
+</html>

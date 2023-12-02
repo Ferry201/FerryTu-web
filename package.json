@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "dayjs": "^1.11.9",
+    "mustache": "^4.2.0"
+  }
+}
