@@ -1,0 +1,345 @@
+<html lang = "en">
+	<head>
+		<meta charset = "UTF-8">
+		<meta
+			name = "viewport"
+			content = "width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+		>
+		<meta
+			http-equiv = "X-UA-Compatible"
+			content = "ie=edge"
+		>
+		<title>Document</title>
+		<style>
+			body {
+				box-sizing: border-box;
+				display: flex;
+				justify-content: center;
+				/*background: #f9f9ee;*/
+				background: repeating-linear-gradient(45deg, #f0cfcf 0, #f0cfcf 15px, #ebe7e7 0, #ebe7e7 30px)
+				/*background-image: repeating-linear-gradient(-45deg,transparent 0 ,transparent 20px , black 20px ,black 40px);*/
+			}
+			
+			h1 {
+				margin-top: 6px;
+				
+				color: #f0cfcf;
+			}
+			
+			.sign-up-box {
+				width: 280px;
+				margin: 0 auto;
+				display: inline-flex;
+				flex-flow: column;
+				background: white;
+				padding: 18px;
+				border-radius: 20px;
+				height: fit-content;
+				box-shadow: 1px 1px 3px 3px #7c7979;
+				
+				
+			}
+			
+			.sign-up-button {
+				margin: 10px 100px;
+				
+			}
+			
+			.mention {
+				font-size: 6px;
+				color: red;
+			}
+			
+			.error-style {
+				color: red;
+				border-bottom: 1px solid red;
+			}
+			
+			.captcha-img {
+				width: 80px;
+				height: 25px;
+			}
+			
+			label {
+				font-size: 10px;
+			}
+			
+			#captcha-verif {
+				width: 80px;
+			}
+			
+			#email-verif {
+				width: 100px;
+			}
+			
+			a {
+				text-decoration: unset;
+				color: black;
+			}
+			
+			input {
+				outline: unset;
+				border: none;
+				border-bottom: 1px solid #393939;
+			}
+			
+			input:focus-visible {
+				outline: unset;
+			}
+			
+			.small-font {
+				margin-left: 10px;
+				font-size: 10px;
+				background: white;
+				outline: unset;
+				border: 1px solid #f0cfcf;
+				border-radius: 3px;
+				color: black;
+			}
+			
+			.small-font:hover {
+				background: #f0cfcf;
+				color: white;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<div class = "sign-up-box">
+			<h1>Sign Up</h1>
+			
+			<!--			action 处理表单提交的url-->
+			<form>
+				<label for = "username">用户名：</label>
+				<br>
+				<input
+					type = "text"
+					id = "username"
+					name = "username"
+				
+				>
+				<p class = "mention user-mention"></p>
+				
+				<label for = "email">电子邮件：</label>
+				<br>
+				<input
+					type = "email"
+					id = "email"
+					name = "email"
+				>
+				<p class = "mention email-mention"></p>
+				
+				<label for = "password">密码：</label>
+				<br>
+				<input
+					type = "password"
+					id = "password"
+					name = "password"
+				
+				>
+				<p class = "mention psw-mention"></p>
+				<!--				captcha-->
+				<label for = "captcha-verif">验证码：</label>
+				<br>
+				<input
+					type = "text"
+					id = "captcha-verif"
+					name = "captcha-verif"
+				>
+				<img class = "captcha-img">
+				<span>看不清?</span>
+				<button>
+					<a href = "javascript:captcha();">
+						刷新
+					</a>
+				</button>
+				<!--				<button class = "refresh-button">刷新</button>-->
+				<p class = "mention captchaVerif-mention"></p>
+				
+				
+				<label for = "email-verif">邮箱验证码：</label>
+				<br>
+				<input
+					type = "text"
+					id = "email-verif"
+					name = "email-verif"
+				>
+				<button class = "send-button">send</button>
+				<p class = "mention emailVerif-mention"></p>
+				
+				
+				<input
+					type = "button"
+					value = "提交"
+					class = "sign-up-button"
+					onclick = "check()"
+				>
+			</form>
+		</div>
+	</body>
+	<script>
+		
+		/*生产环境*/
+		const env_prod = `http://42.192.112.170:5555`;
+		/*本地环境*/
+		const env_local = `http://192.168.0.10:5555`;
+		const env = env_local;
+		
+		const signPassword = document.getElementById('password');
+		const pswMention = document.querySelector('.psw-mention');
+		const userMention = document.querySelector('.user-mention');
+		const emailMention = document.querySelector('.email-mention');
+		const captchaMention = document.querySelector('.captchaVerif-mention');
+		const signUpButton = document.querySelector('.sign-up-button');
+		const userName = document.getElementById('username');
+		const email = document.getElementById('email');
+		const captchaVerif = document.getElementById('captcha-verif');
+		const sendButton = document.querySelector('.send-button');
+		
+		userName.focus();
+		
+		function captcha () {
+			document.querySelector('.captcha-img').src = `${ env }/sign-up-captcha?email=${ email.value }&ran=${ Math.random() }`;
+		}
+		
+		function checkPSW_username (psw) {
+			let reg = /^[a-zA-Z][a-zA-Z0-9_]{6,14}$/;
+			if ( psw.value === '' || reg.test(psw.value) === false ) {
+				if ( psw == signPassword ) {
+					pswMention.innerText = '密码不能为空,首字母必须是字母,由字母数字下划线组成';
+				}
+				if ( psw == userName ) {
+					userMention.innerText = '用户名不能为空,首字母必须是字母,由字母数字下划线组成';
+				}
+				psw.classList.add('error-style');
+			} else {
+				if ( psw == signPassword ) {
+					pswMention.innerText = '';
+				}
+				if ( psw == userName ) {
+					userMention.innerText = '';
+				}
+				psw.classList.remove('error-style');
+			}
+			
+		}
+		
+		function checkEmail (email) {
+			
+			let reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+			if ( email.value === '' || !reg.test(email.value) ) {
+				emailMention.innerText = '邮箱不能为空，且符合邮箱标准形式';
+				email.classList.add('error-style');
+				return false;
+			} else {
+				emailMention.innerText = '';
+				email.classList.remove('error-style');
+				return true;
+			}
+			
+		}
+		
+		email.addEventListener('blur' , function () {
+			captcha();
+		});
+		
+		function check (e) {
+			checkPSW_username(signPassword);
+			checkPSW_username(userName);
+			
+		};
+		sendButton.classList.add('small-font');
+		
+		sendButton.addEventListener('click' , function (e) {
+			e.stopPropagation();
+			//阻止事件继续传播到外层元素(冒泡阶段,不会阻止捕获阶段)
+			e.preventDefault();
+			
+			
+			ajax(`${ env }/verf-code` , {
+				headers : {
+					'Content-Type' : 'application/json' ,
+				} ,
+				method : 'POST' ,
+				body : {
+					email : email.value ,
+					code : captchaVerif.value ,
+				} ,
+				fulfilled (data) {
+					/*这样获取到xhr的response对象*/
+					// const response = this.response;
+					/*data是xhr的responseBody,是个json对象*/
+					if ( data === false ) {
+						captchaVerif.classList.add('error-style');
+						captchaMention.innerText = '验证码错误 , 请重新输入';
+					} else {
+						captchaMention.innerText = '';
+						captchaVerif.classList.remove('error-style');
+					}
+				} ,
+				failed (err) {
+					/*请求失败,err是错误对象*/
+					console.error(err);
+				} ,
+				completed () {
+					
+				} ,
+			});
+		});
+		
+		function ajax (url , keyPoint) {
+			const xhr = new XMLHttpRequest();
+			
+			xhr.addEventListener("readystatechange" , function () {
+				if ( xhr.readyState === 4 && xhr.status === 200 ) {
+					console.log(`完成！状态码：${ xhr.status }`);
+					const data = JSON.parse(xhr.responseText).data;
+					console.log(data);
+					let fnSuccess = keyPoint.fulfilled;
+					fnSuccess(data);
+					
+					checkEmail(email);
+					if ( checkEmail(email) === true && data===true) {
+						let countdown = 31;
+						let timeId = setInterval(function () {
+							countdown = countdown - 1;
+							if ( countdown !== 0 ) {
+								sendButton.innerText = `验证码已发送到邮箱,请等待${ countdown }s`;
+								sendButton.setAttribute('disabled' , 'true');
+							}else{
+								clearTimeout(timeId);
+								sendButton.innerText = '发送';
+								sendButton.removeAttribute('disabled')
+								//disabled设为false是没用的
+							}
+						} , 1000);
+					} else {
+						alert('格式错误!');
+					}
+				}
+			});
+			xhr.addEventListener("error" , function () {
+				let fnFailed = keyPoint.failed;
+				fnFailed();
+			});
+			//不管请求成功还是失败都要执行的函数 :
+			xhr.addEventListener('loadend' , function () {
+				
+			});
+			
+			xhr.open(
+				keyPoint.method ,
+				url ,
+			);
+			
+			let headerKey = (Object.keys(keyPoint.headers)[0]);
+			let headerValue = (Object.values(keyPoint.headers)[0]);
+			xhr.setRequestHeader(`${ headerKey }` , `${ headerValue }`);
+			
+			let sendContent = JSON.stringify(keyPoint.body);
+			xhr.send(sendContent);
+		}
+	
+	
+	</script>
+</html>

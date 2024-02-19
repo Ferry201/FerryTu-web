@@ -1,0 +1,96 @@
+<meta charset="UTF-8">
+<script>
+	/**
+	 * 创建一个《Animal》class，拥有【eat】和【sleep】方法
+	 * 创建《Human_》class继承于《Animal》，拥有【speak】和【work】方法
+	 * 创建《Pet》class继承于《Animal》，拥有【nestle】和【play】方法
+	 * 创建《Cat》class继承于《Pet》，拥有【meow】方法
+	 * 创建《Dog》class继承于《Pet》，拥有【wong】方法
+	 * 最后创建出女主人Kacy和一只猫和一只狗
+	 */
+	
+	/**
+	 * 构造函数实现：
+	 */
+	
+	
+	
+	
+	
+	
+	
+	function Animal () {
+		this.leg=4
+	}
+	Animal.prototype.eat=function () {
+		console.log('eat strawberry');
+	}
+	Animal.prototype.sleep=function () {
+		console.log('sleep early');
+	}
+	// 人类
+	function Human () {
+		this.leg=2
+	}
+	Human.prototype.speak=function () {
+		console.log('speak loudly');
+	}
+	Human.prototype.work=function () {
+		console.log('worker is bad');
+	}
+	
+	let Kacy=Reflect.construct(Animal,Human)
+	console.log(Kacy.__proto__);
+	console.log(Kacy instanceof Animal);
+	//true
+		// 宠物
+	
+	//猫
+	
+	
+	// 狗
+	
+	
+		/**
+	 * class语法实现：
+	 */
+	//animal
+		
+		//people
+		
+		//pet
+		
+	//cat
+	
+	
+	
+	// throw '';
+		class An {
+			leg = 4;
+			eat(){
+				console.log('吃');
+			}
+		};
+	
+	class Human_ extends An {
+		eyes = 2;
+		work(){
+			console.log('工作');
+		}
+	}
+	a = new Human_();
+	console.log(a);
+	console.log(a.__proto__);
+	console.log(a.__proto__ === Human_.prototype);
+	console.log(a.__proto__.constructor);//Human_
+	console.log(a.__proto__.constructor === Human_.prototype.constructor);
+	console.log(Human_.prototype.constructor === Human_);
+	console.log(Human_.prototype);//与console.log(a.__proto__)结果一样
+	console.log(Human_.prototype.__proto__ === An.prototype);
+	console.log(An.prototype.__proto__ === Object.prototype);
+	//实例的原型是__proto__,函数的是prototype , 实例没有prototype
+</script>
+
+<script type="text/jsx">
+	
+</script>

@@ -13,9 +13,11 @@
 		<title>Document</title>
 		<style>
 			body {
-				--main-color: #fff4f4;
-				--btn-color: #e599a9;
-				--text-color: #922929;
+				
+				--main-color: #e8f7e6;
+				--btn-color: #287221;
+				--text-color: #165210;
+				
 			}
 			
 			.box {
@@ -27,8 +29,8 @@
 				width: 93px;
 				margin-right: 3px;
 				background: white;
-				outline: none;
-				border: 1px solid black;
+				outline: unset;
+				border: unset;
 				margin-bottom: 2px;
 				cursor: pointer;
 				font-weight: bolder;
@@ -38,10 +40,11 @@
 				width: 93px;
 				margin-right: 3px;
 				background: var(--btn-color);
-				outline: none;
+				outline: unset;
+				border: unset;
 				color: white;
 				font-weight: bolder;
-				border: 1px solid black;
+				
 				margin-bottom: 2px;
 				cursor: pointer;
 			}
@@ -49,7 +52,7 @@
 			.todo-li {
 				cursor: pointer;
 				background: var(--main-color);
-				margin-bottom: 2px;
+				margin-bottom: 4px;
 				position: relative;
 				min-height: 34px;
 				height: fit-content;
@@ -76,7 +79,11 @@
 				font-size: 6px;
 				
 			}
-			
+			.notes-mention{
+				color: var(--text-color);
+				font-size: 8px;
+				margin-left: 7.5px;
+			}
 			.btn {
 				background: white;
 				outline: none;
@@ -131,7 +138,7 @@
 			}
 			
 			.schedule-textarea {
-				width: 218px;
+				width: 212px;
 				resize: none;
 			}
 			
@@ -179,9 +186,13 @@
 			body {
 				font-family: Arial, Helvetica, sans-serif;
 			}
-			
+			.notesBox{
+				display: inline-flex;
+				flex-direction: row;
+				align-items: center;
+			}
 			.notes {
-				width: 270px;
+				width: 200px;
 				margin: 0 7.5px;
 				resize: none;
 			}
@@ -192,10 +203,14 @@
 	
 	
 	<body>
+		
+		
+		
 		<div class = "box">
+			
 			<div class = "first-input-area">
 				<textarea
-					placeholder = "input your schedule"
+					placeholder = "input your task"
 					class = "schedule-textarea"
 				></textarea>
 				<div class = "add-change">
@@ -212,6 +227,7 @@
 						<option
 							value = "green"
 							id = "green"
+							selected
 						>green
 						</option>
 						<option
@@ -233,19 +249,20 @@
 				</div>
 			</div>
 			<div tabs></div>
-			<ul></ul>
+			<ul class="task-ul"></ul>
 		</div>
 	</body>
 	
 	
 	
 	<script>
-		
-		//增加备注按钮和功能 , 切换主题颜色,检测到有滚动条时增加高度
+		//任务添加页
+		//切换主题颜色, 检测到有滚动条时增加高度
+		//修复一个bug: 没有任务时也应该可以点击tab才对
 		const select = document.getElementsByTagName('select')[0];
 		const input = document.getElementsByTagName('textarea')[0];
 		const button = document.getElementsByTagName('button')[0];
-		const ul = document.getElementsByTagName('ul')[0];
+		const ul = document.querySelector('.task-ul')
 		const tabsContainer = document.querySelector('div[tabs]');
 		let currentTabType = 'all';
 		let todos = localStorage['todos'] ? JSON.parse(localStorage['todos']) : [];
@@ -266,6 +283,7 @@
 		];
 		
 		select.addEventListener('click' , function (e) {
+			console.log(select.value);
 			let selectColor = e.target.value;
 			localStorage.setItem('currentColor' , selectColor);
 			switch ( selectColor ) {
@@ -286,7 +304,7 @@
 					break;
 				case 'orange':
 					document.body.style.setProperty('--main-color' , '#fbf3f0');
-					document.body.style.setProperty('--btn-color' , '#e09675');
+					document.body.style.setProperty('--btn-color' , '#db9677');
 					document.body.style.setProperty('--text-color' , '#8e4e31');
 					break;
 				case 'pink':
@@ -297,7 +315,7 @@
 			}
 			
 		});
-		console.log(select.value);
+		
 		
 		
 		const setTodos = (id , partialObject = {} , del = false) => {
@@ -388,27 +406,37 @@
 					});
 				});
 				let Notes=document.createElement('textarea');
+				let completedNotes=document.createElement('button');
+				completedNotes.classList.add('btn');
+				completedNotes.innerText='备注完成'
 				Notes.classList.add('notes');
-			
-				addNotesButton.addEventListener('click' , function () {
-					Notes.focus();
-					addNotesButton.setAttribute('disabled' , 'true');
+				Notes.focus()
+				let notesBox=document.createElement('div');
+				notesBox.append(Notes,completedNotes);
+				notesBox.classList.add('notesBox')
+				let Notes_mention=document.createElement('div')
+				Notes_mention.innerText='只能添加一条备注 , 编辑完备注后点击"备注完成"按钮即可保存';
+				Notes_mention.classList.add('notes-mention')
+				
+				
+				addNotesButton.addEventListener('click',function () {
+					li.append(todoOperate ,Notes_mention, notesBox,renewTime);
+					addNotesButton.setAttribute('disabled','true');
 					addNotesButton.innerText='不可用';
-					
-					alert('只能添加一条备注')
-					Notes.addEventListener('input' , function () {
-						console.log(Notes.value);
-						window.addEventListener('click' , function () {
-							todo.notes = Notes.value;
-							const myNotes=document.createElement('div');
-							myNotes.innerText='备注:'+Notes.value
-							renderTodos()
-						});
+					addNotesButton.style.background='gray';
+					addNotesButton.style.color='white';
+				})
+				Notes.addEventListener('input' , function () {
+					Notes.focus()
+					completedNotes.addEventListener('click' , function () {
+						todo.notes = Notes.value;
+						todo.currentTime = (new Date()).toLocaleString();
+						renderTodos()
 					});
-					
-					li.append(todoOperate , renewTime , br , Notes);
-					
+					Notes.focus()
 				});
+				
+				
 				deleteButton.addEventListener('click' , function () {
 					setTodos(todo.id , null , true);
 					localStorage['todos'] = JSON.stringify(todos);
@@ -427,12 +455,16 @@
 					
 				});
 				const br = document.createElement('br');
-				console.log(Notes);
 				if(todo.notes===null){
 					li.append(todoOperate , renewTime);
 				}else{
 					Notes.value=todo.notes;
-					li.append(todoOperate , renewTime,br , Notes);
+					addNotesButton.setAttribute('disabled','true');
+					addNotesButton.innerText='不可用';
+					addNotesButton.style.background='gray';
+					addNotesButton.style.color='white';
+					
+					li.append(todoOperate ,Notes_mention, notesBox,renewTime);
 				}
 				
 				li.classList.add('todo-li');

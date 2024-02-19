@@ -5,35 +5,16 @@
  * @returns {*}
  */
 export const throttle = function (callback , timeout) {
-	let timeID = null;
-	
-	// function _throttle () {
-	// 	if ( timeID===null ) {
-	// 		timeID = setTimeout(function () {
-	// 			callback();
-	// 			timeID = null;	
-	// 		}, timeout);
-	// 	}
-	// 	console.log(timeID);
-	// }
-	
-	//时间戳:
-	// let preTime=Date.now();
-	//preTime是闭包形成的那一刻Date.now的值,为了防止刷新后就立刻点击导致nextTime-preTime<timeOut,
-	// 也就是说第一次查询没有查询结果,所以更好的做法是设置preTime的值为0.
-	let preTime = 0;
-	
-	function _throttle () {
-		let nextTime = Date.now();
-		console.log(nextTime - preTime);
-		if ( nextTime - preTime >= timeout ) {
-			callback();
-			preTime = nextTime;
+//每隔一段时间执行一次
+	let lastTime=0;
+	return function () {
+		let nowTime=Date.now()
+		if(nowTime-lastTime>timeout){
+			callback()
+			lastTime=nowTime
 		}
-		
 	}
 	
-	return _throttle;
 	
 };
 
